@@ -1,0 +1,485 @@
+/* 
+    Documento: Hoja de Estilos - BBVA
+    Author     : White Cirrus
+  
+*/
+
+/* Colores generales
+	Azul BBVA='#369';
+	Azul claro='#009ddc';
+	Azul oscuro='#004c93';
+*/
+hr {
+	background-color: #009ddc;
+	height: 3px;
+	border: 0;
+}
+
+h1 {
+	font-size: 22px;
+	font-weight: bold;
+	color: #009ddc;
+}
+
+h2 {
+	font-size: 18px;
+	font-weight: bold;
+	color: #004c93;
+}
+
+h3 {
+	font-size: 14px;
+	font-weight: bold;
+	color: #004c93;
+}
+
+html {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+	background-color: #ffffff;
+	font-size: 12px;
+	margin: 20px 0;
+	padding: 0;
+}
+
+#wrapper {
+	width: 850px;
+	margin: 0 auto;
+	margin-bottom: 2cm;
+}
+
+#menu {
+	padding-left: 25px;
+	border-bottom: solid 3px #009ddc;
+}
+
+#menu li {
+	display: inline;
+}
+
+#menu a {
+	font-size: 14px;
+	text-decoration: none;
+	color: #004c93;
+	padding: 0px 20px;
+	font-weight: bold;
+}
+
+#menu a.active,#menu a:hover {
+	color: #009ddc;
+}
+
+#wrapper_content {
+	border: solid 1px #CCCCCC;
+	margin: 5px 0;
+	padding: 19px 19px;
+	float: left;
+	width: 810px;
+	text-align: justify;
+}
+
+#header_content {
+	float: left;
+}
+
+#column {
+	float: left;
+	clear: left;
+	margin: 20px 0px;
+}
+
+#main {
+	width: 638px;
+	float: left;
+	margin: 20px 0px 20px 20px;
+	color: #2E2E2E;
+}
+
+#main_ad {
+	width: 808px;
+	float: left;
+	color: #2E2E2E;
+}
+
+#main_ad  img {
+	vertical-align: text-top;
+}
+
+#footer {
+	clear: both;
+	text-align: right;
+	margin-bottom: 5px;
+	color: #2E2E2E;
+}
+
+#block_inf {
+	padding: 10px;
+	width: 130px;
+	border: solid 1px #CCCCCC;
+	margin-bottom: 5px;
+	background-color: #cdebf9;
+	color: #2E2E2E;
+}
+
+#block_inf p,#block_inf a {
+	text-align: right;
+	font-size: 12px;
+	font-weight: bold;
+	color: #009ddc;
+	text-decoration: none;
+}
+
+#block_inf a:hover {
+	color: #f29400;
+}
+
+.breadcrumbs {
+	margin: 10px 0;
+	color: #0394d3;
+}
+
+.breadcrumbs a {
+	color: #0394d3;
+}
+
+.breadcrumbs a:hover {
+	color: #f29400;
+}
+
+.breadcrumbs a.active {
+	text-decoration: none;
+}
+
+.link {
+	font-size: 12px;
+	color: #004c93;
+	font-weight: bold;
+}
+
+.link:hover {
+	color: #009ddc;
+}
+
+.tabla_invitaciones {
+	width: 100%;
+	margin: 20px 0;
+	text-indent: 5px;
+	border: solid 1px #CCCCCC;
+}
+
+.tabla_invitaciones th {
+	line-height: 200%;
+	font-size: 14px;
+	color: #009ddc;
+}
+
+.tabla_invitaciones td {
+	background: #F6F6F6;
+}
+
+.tabla_invitaciones td.titulo {
+	border-top: solid 1px #CCCCCC;
+}
+
+.masInfo {
+	text-decoration: none;
+	color: #000000;
+}
+
+.masInfo:hover {
+	color: #009ddc;
+}
+
+.tabla_invitaciones td.boton {
+	text-indent: 0px;
+	width: 159px;
+	border-top: solid 1px #CCCCCC;
+	border-left: solid 1px #CCCCCC;
+	background: #E0E0E0;
+}
+
+.btn_confirmar {
+	background: url(../../images/btn_large_confirmar.png) top left no-repeat;
+	width: 134px;
+	height: 22px;
+	margin-top: 3px;
+	padding-top: 3px;
+	display: block;
+	color: #ffffff;
+	text-decoration: none;
+	text-align: center;
+}
+
+.btn_confirmar:hover {
+	background: url(../../images/btn_large_confirmado.png) top left
+		no-repeat;
+}
+
+.btn_confirmado {
+	background: url(../../images/btn_large_confirmado.png) top left
+		no-repeat;
+	width: 134px;
+	height: 22px;
+	margin-top: 3px;
+	padding-top: 3px;
+	display: block;
+	color: #ffffff;
+	text-decoration: none;
+	text-align: center;
+}
+
+.btn_confirmado:hover {
+	background: url(../../images/btn_large_confirmar.png) top left no-repeat;
+}
+
+.btn_noCreditos {
+	background: url(../../images/btn_large_insuficientes.png) top left
+		no-repeat;
+	width: 134px;
+	height: 22px;
+	margin-top: 3px;
+	padding-top: 3px;
+	display: block;
+	color: #ffffff;
+	text-decoration: none;
+	text-align: center;
+}
+
+.ficha {
+	margin: 0 40px;
+}
+
+.column_ficha_left {
+	float: left;
+	width: 400px;
+}
+
+.column_ficha_right {
+	float: right;
+	width: 400px;
+}
+
+.tabla {
+	width: 100%;
+	text-align: left;
+}
+
+.tabla th {
+	padding: 5px;
+	border-top: 2px solid #A4C4D0;
+	border-bottom: 2px solid #A4C4D0;
+	background-color: #CEE3F6;
+}
+
+.tabla td {
+	padding: 5px;
+	border-bottom: 1px solid #A4C4D0;
+}
+
+.form_busqueda {
+	background-color: #CEE3F6;
+	border-top: 2px solid #A4C4D0;
+	border-bottom: 2px solid #A4C4D0;
+}
+
+.info {
+	color: red;
+	padding-left: 1em
+}
+
+.t_courses {
+	width: 100%;
+	float: left;
+	margin: 10px 0;
+}
+
+.t_course_name {
+	width: 75%;
+	height: 17px;
+	padding: 6px;
+	font-size: 14px;
+	color: #009ddc;
+	background: #F6F6F6;
+	border: solid 1px #CCCCCC;
+	border-right: transparent;
+}
+
+.t_course_ncred {
+	width: 25%;
+	height: 17px;
+	padding: 6px;
+	font-size: 14px;
+	border: solid 1px #CCCCCC;
+	border-left: none;
+}
+
+.t_course_info {
+	width: 25%;
+	height: 17px;
+	border: solid 1px #CCCCCC;
+	padding: 6px;
+	font-size: 14px;
+	background: #FFFFFF;
+    margin-bottom: 20px;
+}
+
+.t_course_button {
+	width: 25%;
+	height: 17px;
+	border-right: solid 1px #CCCCCC;
+	padding: 6px;
+	font-size: 14px;
+	color: #009ddc;
+	background: #E0E0E0;
+}
+
+.block_curso_content {
+	width: 76%;
+	height: 18px;
+	float: left;
+	padding: 6px;
+	background: #F6F6F6;
+}
+
+.block_curso_content a {
+	color: #2E2E2E;
+	text-decoration: none;
+}
+
+.block_curso_content a:hover {
+	color: #f29400;
+}
+
+.block_curso_content2 {
+	width: 21%;
+	height: 26px;
+	border-left: solid 1px #CCCCCC;
+	float: left;
+	padding-top: 4px;
+	background: #E0E0E0;
+}
+
+#tabs ul {
+	float: left;
+	width: 100%;
+	list-style: none;
+	padding: 0px 0px;
+	border-bottom: 4px solid #cdebf9;
+}
+
+#tabs li {
+	float: left;
+	margin-right: 2px;
+	display: inline;
+	padding: 10px 10px;
+	background-color: #F2F2F2;
+	font-size: 12px;
+	text-decoration: none;
+	color: #004c93;
+	font-weight: bold;
+	cursor: pointer;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+}
+
+#tabs li:hover {
+	color: #009ddc;
+}
+
+#tabs li:active {
+	color: #009ddc;
+}
+
+#tabs a {
+	font-weight: bold;
+	color: #004c93;
+	text-decoration: none;
+	padding: 5px 10px;
+}
+
+#tabs a:hover {
+	color: #009ddc;
+}
+
+#tabs a:active {
+	color: #009ddc;
+}
+
+.btn_apply {
+	background-color: #0791D9;
+	width: 100%;
+	border-radius: 6px;
+	color: #ffffff;
+	padding: 3px 15px;
+	text-align: center;
+}
+
+.btn_apply:hover {
+	background-color: #FF9503;
+}
+
+.btn_apply[disabled] {
+	background-color: #004c93;
+}
+
+.btn_applied {
+	background-color: #CC9900; /* Green: #0dba0d */
+	width: 100%;
+	border-radius: 6px;
+	color: #ffffff;
+	padding: 3px 15px;
+	text-align: center;
+}
+
+.btn_applied:hover {
+	background-color: #0791D9; /* Red: #db0f0f */
+}
+
+#waiting_mask {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	display: none;
+	z-index: 100;
+}
+
+#popup {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -125px;
+	margin-left: -125px;
+	z-index: 101;
+}
+
+.hidden {
+	display: none;
+}
+
+.help {
+	font-style: italic;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	border: 2px solid #009ddc;
+}
+
+/* Botón transparente */
+.btn_transp {
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.az_3 {
+	color: #004c93
+}
+
+.rojo {
+	color: red;
+}

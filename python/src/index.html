@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Facturación</title>
+	<meta name="author" content="Carlos Lallana" />
+	<link type="text/css" rel="stylesheet" href="/statics/stylesheets/main.css" />
+	<link type="text/css" rel="stylesheet" href="/statics/stylesheets/dropdown.css" />
+	<!-- Date: 2013-01-25 -->
+	
+	 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+
+</head>
+
+<body>
+	
+	<div id='menuWrapper'>
+		<div class='menu'>
+			<h1><a href="/">App Facturación Beta</a></h1>
+			<ul>
+				<li><a>Facturas</a>
+				<ul>
+					<li><a href="/invoices?action=view_invoices&p=1">Ver Facturas</a></li>
+					<li><a href="/invoices/new?action=view_new_invoice">Nueva Factura</a></li>
+				</ul>
+				</li>
+				<li><a>Clientes</a>
+				<ul>
+					<li><a href="/customers?action=view_customers&p=1">Ver Clientes</a></li>
+					<li><a href="/customers/new?action=new_customer">Nuevo Cliente</a></li>
+				</ul>
+				</li>
+				<li><a>Productos</a>
+				<ul>
+					<li><a href="/products?action=view_products&p=1">Ver Productos</a></li>
+					<li><a href="/products/new?action=new_product">Nuevo Producto</a></li>
+				</ul>
+				</li>
+				<li><a>Opciones</a>
+				<ul>
+					<li><a href="/settings/editinfo?action=edit_info">Editar Información</a></li>
+					<li><a href="/settings/account?action=view_account_settings">Configurar cuenta</a></li>
+					<li><a href="/logout">Cerrar sesión</a></li>
+				</ul>
+				</li>
+			</ul>
+		</div>
+	</div> <!-- End menu -->
+	
+	<h1>FACTURACIONES</h1>
+
+	<p>Ver clientes</p>
+	<form action="customers" method="get">
+		<input type="hidden" name="action" value="view_customers" />
+		<!-- p is the current page for the pagination -->
+		<input type="hidden" name="p" value="1" />
+		<input type="submit" value="Ver" />
+	</form>
+
+	
+	<br>
+	<p>Ver productos</p>
+	<form action="products" method="get">
+		<input type="hidden" name="action" value="view_products" />
+		<input type="hidden" name="p" value="1" />
+		<input type="submit" value="Ver" />
+	</form>
+
+	<br>
+	<p>Ver facturas</p>
+	<form action="invoices" method="get">
+		<input type="hidden" name="action" value="view_invoices" />
+		<input type="hidden" name="p" value="1" />
+		<input type="submit" value="Ver" />
+	</form>
+	
+	<br>
+	<p>Ver almacenes</p>
+	<form action="warehouses" method="get">
+		<input type="hidden" name="action" value="view_warehouses" />
+		<input type="hidden" name="p" value="1" />
+		<input type="submit" value="Ver" />
+	</form>
+	
+</body>
+</html>

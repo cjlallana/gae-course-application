@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>BBVA . Administración de empleados</title>
+<meta name="author" content="Carlos Lallana" />
+<link type="text/css" rel="stylesheet"
+	href="/statics/stylesheets/bbva-styles.css" />
+<!-- Date: 2013-04-08 -->
+
+<script src="/statics/js/jquery-1.9.1.js"></script>
+<script src="/statics/js/utils.js"></script>
+
+<script type="text/javascript">
+/* Set the selected index of each selector to blank. */
+$(document).ready(function(){
+	{% if not worker %} // Only if we are not editing
+		$("#country").prop("selectedIndex", -1);
+		$("#plan").prop("selectedIndex", -1);
+	{% endif %}
+});
+</script>
+
+</head>
+
+<script type="text/javascript">
+function hideTags()
+{
+	$("#msg_email").hide();
+	$("#msg_country").hide();
+	$("#msg_plan").hide();
+	$("#msg_l_cred").hide();
+	$("#msg_g_cred").hide();
+}
+</script>
+
+<script type="text/javascript">
+function validateForm()
+{
+	hideTags();
+	
+	var ok		= true;
+	var email 	= document.forms["new_worker"]["email"].value;
+	var c_index = document.forms["new_worker"]["country"].selectedIndex;
+	var p_index = document.forms["new_worker"]["plan"].selectedIndex;
+	var lc		= document.forms["new_worker"]["local_credits"].value;
+	var gc		= document.forms["new_worker"]["global_credits"].value;
+
+	var atpos 	= email.indexOf("@");
+	var dotpos 	= email.lastIndexOf(".");
+	if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length || 
+		email == null || email == ""){
+		$("#msg_email").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (c_index == -1){	
+		$("#msg_country").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (p_index == -1){
+		$("#msg_plan").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (!isInteger(lc)){	
+		$("#msg_l_cred").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (!isInteger(gc)){
+		$("#msg_g_cred").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (ok){
+		c_key = document.forms["new_worker"]["country"].options[c_index].id;
+		p_key = document.forms["new_worker"]["plan"].options[p_index].id;
+		
+		document.getElementById("c_key").value = c_key;
+		document.getElementById("p_key").value = p_key;
+		
+		return true;
+	}
+	
+	else
+		return false;
+}
+</script>
+
+<script type="text/javascript">
+function fillFields()
+{
+	{% if worker %} // Neccessary to avoid errors
+		document.getElementById("email").value 			= "{{worker.email}}";
+		document.getElementById("local_credits").value 	= "{{worker.local_credits}}";
+		document.getElementById("global_credits").value	= "{{worker.global_credits}}";
+	
+		setStringSelector(document.getElementById("country"), "{{worker.w_country.name}}");
+		setStringSelector(document.getElementById("plan"), "{{worker.w_plan.name}}");
+	{% endif %}
+}
+</script>
+
+<script type="text/javascript">
+function cancel()
+{
+	window.location.assign("/workers");
+}
+</script>
+
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu">
+			<ul>
+				<li><a href="/countries"><span>Países</span></a></li>
+				<li><a href="/plans"><span>Itinerarios</span></a></li>
+				<li><a href="/courses"><span>Cursos</span></a></li>
+				<li><a href="/relations"><span>Solicitudes</span></a></li>
+				<li><a href="/administrators"><span>Administradores</span></a></li>
+				<li><a class="active" href="/workers"><span>Empleados</span></a></li>
+			</ul>
+		</div>
+		<!-- Fin Menu -->
+
+		<!-- Content -->
+		<div id="wrapper_content">
+			{% if worker %}
+			<h2>EDITAR EMPLEADO</h2>
+			{% else %}
+			<h2>NUEVO EMPLEADO</h2>
+			{% endif %}
+
+			<form name="new_worker" id="new_worker" action="/workers/new/save"
+				method="post">
+				<br>Email: <span class="rojo">*</span><br> 
+				<input autofocus type="text" name="email" id="email" /> 
+				<span class="hidden rojo" id="msg_email">Introduzca un email válido</span>
+				<br><br>País asociado: <span class="rojo">*</span><br> 
+				<select name="country" id="country"> 
+				{% for c in countries %}
+					<option id="{{c.key()}}">{{c.name}}</option> 
+				{% endfor %}
+				</select> 
+				<input type="hidden" name="c_key" id="c_key" />
+				<span class="hidden rojo" id="msg_country">Seleccione un país</span>
+				<br><br>Itinerario asociado: <span class="rojo">*</span><br>
+				<select name="plan" id="plan">
+				{% for p in plans %}
+					<option id="{{p.key()}}">{{p.name}}</option>
+				{% endfor %}
+				</select> 
+				<input type="hidden" name="p_key" id="p_key" />
+				<span class="hidden rojo" id="msg_plan">Seleccione un itinerario</span>
+				<br><br>Créditos locales disponibles: <span class="rojo">*</span><br> 
+				<input type="text" name="local_credits" id="local_credits" value="0" />
+				<span class="hidden rojo" id="msg_l_cred">Introduzca un número entero</span>
+				<br><br>Créditos globales disponibles: <span class="rojo">*</span><br> 
+				<input type="text" name="global_credits" id="global_credits" value="0" />
+				<span class="hidden rojo" id="msg_g_cred">Introduzca un número entero</span>
+				
+				<br><br>
+				{% if worker %} 
+				<input type="hidden" name="action" value="edit_worker" /> 
+				<input type="hidden" name="worker_key" value="{{worker.key()}}" />
+				<button onclick="return validateForm()">Actualizar</button>
+				<script type="text/javascript">fillFields()</script>
+				{% else %} <input type="hidden" name="action" value="save_worker" />
+				<button onclick="return validateForm()">Crear</button>
+				{% endif %}
+
+				<button type="button" onclick="cancel()">Cancelar</button>
+
+			</form>
+			<p class="info" id="info">{{info_tag}}</p>
+		</div>
+	</div>
+</body>
+</html>

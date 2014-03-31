@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>BBVA . Gestión de empleados y cursos</title>
+	<meta name="author" content="Carlos Lallana" />
+	<link type="text/css" rel="stylesheet" href="/statics/stylesheets/bbva-styles.css" />
+	<!-- Date: 2013-04-08 -->
+
+	<script src="/statics/js/jquery-1.9.1.js"></script>
+
+</head>
+
+<script type="text/javascript">
+function deleteRelation()
+{
+	warning = "¿Está seguro de que desea eliminar esta relación?";
+
+	return confirm(warning);
+}
+</script>
+
+<script type="text/javascript">
+function clean()
+{
+	window.location.href = "/localadmin/applications";
+}
+</script>
+
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu" style="padding-left: 65%;">
+			<ul>
+				<li><strong>Administrador Local</strong></li>
+				<li><a class="active" href="/localadmin/applications"><span>Solicitudes</span></a></li>
+			</ul>
+		</div>
+		<!-- Fin Menu -->
+
+		<h2>ESTADO DE LAS SOLICITUDES</h2>
+		
+		<div id="div_button_new_application">
+			<form action="/localadmin/applications/new" method="get">
+				<input type="hidden" name="action" value="view_new_application" />
+				<input type="submit" value="Nueva solicitud" />
+			</form>
+		</div>
+		
+		<br>
+		
+		<h3>Búsqueda de Solicitudes</h3>
+		<form action="">
+		<table>
+			<tr>
+				<td><b>E-mail: </b></td>
+				<td>
+					<input type="text" name="worker" id="worker" 
+					value="{{filters.worker}}" placeholder="empleado@bbva.com"/>
+				</td>
+			</tr>
+			<tr>
+				<td><b>Código del Curso: </b></td>
+				<td>
+					<input type="text" name="code" id="course" 
+					value="{{filters.course}}"/>
+				</td>
+			</tr>
+			<tr>
+				<td><b>Estado de solicitud: </b></td>
+				<td>
+					<input type="text" name="status" id="status" 
+					value="{{filters.status}}"/>
+				</td>
+			</tr>
+			<tr>
+  				<td><input type="submit" value="Buscar" /></td>
+  				<td><button type="button" onclick="clean()">Limpiar</button></td>
+			</tr>
+		</table>
+		</form>
+		<br>
+		
+		<p class="info" id="info">{{info_tag}}</p>
+		
+		{% if relations %}
+		<table cellpadding="0" cellspacing="0" class="tabla">
+			<tr>
+				<th><a href="/localadmin/application?action=view_applications&p=1&order=worker">Empleado</a></th>
+				<th><a href="/localadmin/application?action=view_applications&p=1&order=course">Curso</a></th>
+				<th><a href="/localadmin/application?action=view_applications&p=1&order=status">Estado de solicitud</a></th>
+				<th colspan="2"></th>
+			</tr>
+			{% for relation in relations %}
+			<tr>
+				<td width=25%>{{relation.r_worker.email}}</td>
+				<td width=25%>{{relation.r_course.name}}</td>
+				<td width=25%>{{relation.status}}</td>
+				
+				<td>
+					<form action="/localadmin/applications/edit" method="get" style="float: left;">
+						<input type="hidden" name="action" value="view_edit_application" />
+						<input type="hidden" name="k" value="{{relation.key()}}" />
+						<button class="btn_transp"><img src="/statics/img/iconEdit.gif"></button>
+					</form>
+					<form action="/localadmin/applications/delete" method="post" style="float: left;">
+						<input type="hidden" name="action" value="delete_relation" />
+						<input type="hidden" name="k" value="{{relation.key()}}" />
+						<button class="btn_transp" onclick="return deleteRelation()"><img src="/statics/img/iconDelete.gif"></button>
+					</form>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<div style="float: right;">
+			<form action="/localadmin/applications" method="get">
+				<input type="hidden" name="action" value="view_applications" />
+				<input type="hidden" name="order" value="{{order}}" />
+				<select name="p" onchange="this.form.submit()"> 
+				{% for page in range (1, n_pages + 1) %}
+					<option 
+					{% if page== p %}
+						selected="selected"
+					{% endif %}
+					value="{{page}}">{{page}}</option> {% endfor %}
+				</select>
+			</form>
+		</div>
+		{% else %}
+		<p class="info">¡No hay solicitudes que mostrar!</p>
+		{% endif %}
+
+	</div>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>BBVA . Administración de cursos</title>
+<meta name="author" content="Carlos Lallana" />
+<link type="text/css" rel="stylesheet"
+	href="/statics/stylesheets/bbva-styles.css" />
+<!-- Date: 2013-04-08 -->
+
+<script src="/statics/js/jquery-1.9.1.js"></script>
+<script src="/statics/js/utils.js"></script>
+
+<script type="text/javascript">
+/* Set the selected index of each selector to blank. */
+$(document).ready(function(){
+	{% if not course %} // Only if we are not editing
+		$("#country").prop("selectedIndex", -1);
+	{% endif %}
+});
+</script>
+
+</head>
+
+<script type="text/javascript">
+function hideTags()
+{
+	$("#msg_name").hide();
+	$("#msg_code").hide();
+	$("#msg_country").hide();
+	$("#msg_l_cred").hide();
+	$("#msg_g_cred").hide();
+}
+</script>
+
+<script type="text/javascript">
+function validateForm()
+{
+	hideTags();
+	
+	var ok			= true;
+	var name 		= document.forms["new_course"]["name"].value;
+	var code 		= document.forms["new_course"]["code"].value;
+	var c_index 	= document.forms["new_course"]["country"].selectedIndex;
+	var cost_lc		= document.forms["new_course"]["cost_local_credits"].value;
+	var cost_gc		= document.forms["new_course"]["cost_global_credits"].value;
+	var course_key	= "";
+	{% if course %}
+	course_key 		= document.forms["new_course"]["course_key"].value;
+	{% endif %}
+
+	if (code == null || code == ""){
+		$("#msg_code").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (name == null || name == ""){
+		$("#msg_name").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (c_index == -1){	
+		$("#msg_country").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (!isInteger(cost_lc) || parseInt(cost_lc) < 0){
+		$("#msg_l_cred").fadeIn('fast');
+		ok = false;
+	}
+	
+	if (!isInteger(cost_gc) || parseInt(cost_gc) < 0){
+		$("#msg_g_cred").fadeIn('fast');
+		ok = false;
+	}
+	
+	if(ok){
+		c_key = document.forms["new_course"]["country"].options[c_index].id;
+		document.getElementById("c_key").value = c_key;
+		return checkCode(course_key, code);
+	}
+	else
+		return false;
+}
+</script>
+
+<script type="text/javascript">
+function checkCode(course_key, code)
+{
+	action 	= 	"/courses/checkcode?action=check_code&k=" + course_key +
+				"&code=" + code;
+
+	var is_code_free = false;
+
+	$.ajax({
+		type: 'POST',
+		url: action,
+		async: false,
+		success: function(data) {
+			if (data == "OK")
+				is_code_free = true;					
+			else
+				$('#info').text(data);
+		}
+	}); // end .ajax
+
+	return is_code_free;
+}
+</script>
+
+<script type="text/javascript">
+function fillFields()
+{
+	{% if course %} // Neccessary to avoid errors
+		document.getElementById("name").value 				= "{{course.name}}";
+		document.getElementById("code").value 				= "{{course.code}}";
+		document.getElementById("cost_local_credits").value = "{{course.cost_local_credits}}";
+		document.getElementById("cost_global_credits").value = "{{course.cost_global_credits}}";
+		document.getElementById("url").value 				= "{{course.url}}";
+	
+		setStringSelector(document.getElementById("country"), "{{course.c_country.name}}");
+		
+		var plans_cb = document.getElementsByName("p_keys[]");
+		{% for r in course.pc_relations %}
+			for (var i = 0; i < plans_cb.length; i++){
+				if ("{{r.r_plan.key()}}" == plans_cb[i].value){
+					plans_cb[i].checked = true;
+					break;
+				}
+			}
+		{% endfor %}
+	{% endif %}
+}
+</script>
+
+<script type="text/javascript">
+function cancel()
+{
+	window.location.assign("/courses");
+}
+</script>
+
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu">
+			<ul>
+				<li><a href="/countries"><span>Países</span></a></li>
+				<li><a href="/plans"><span>Itinerarios</span></a></li>
+				<li><a class="active" href="/courses"><span>Cursos</span></a></li>
+				<li><a href="/relations"><span>Solicitudes</span></a></li>
+				<li><a href="/administrators"><span>Administradores</span></a></li>
+				<li><a href="/workers"><span>Empleados</span></a></li>
+			</ul>
+		</div>
+		<!-- Fin Menu -->
+
+		<!-- Content -->
+		<div id="wrapper_content">
+			{% if course %}
+			<h2>EDITAR CURSO</h2>
+			{% else %}
+			<h2>NUEVO CURSO</h2>
+			{% endif %}
+
+			<form name="new_course" id="new_course" action="/courses/new/save"
+				method="post">
+				<br>Código: <span class="rojo">*</span><br> 
+				<input type="text" name="code" id="code" autofocus />
+				<span class="hidden info" id="msg_code">Introduzca un código</span>
+				<br><br>Nombre: <span class="rojo">*</span><br>
+				<input size="100%" type="text" name="name" id="name" /> 
+				<span class="hidden rojo" id="msg_name">Introduzca un nombre</span>
+				<br><br>País asociado: <span class="rojo">*</span><br> 
+				<select name="country" id="country">
+				{% for c in countries %}
+					<option id="{{c.key()}}">{{c.name}}</option> 
+				{% endfor %}
+				</select> 
+				<span class="hidden info" id="msg_country">Seleccione un país</span>
+				<input type="hidden" name="c_key" id="c_key" /> 
+				<br><br>Itinerarios asociados:<br>
+				{% for p in plans %} 
+				<input type="checkbox" name="p_keys[]" value="{{p.key()}}">{{p.name}}<br>
+				{% endfor %}
+				<br><br>Coste de créditos locales: <span class="rojo">*</span><br> 
+				<input type="text" name="cost_local_credits" id="cost_local_credits" value="0" /> 
+				<span class="hidden info" id="msg_l_cred">Introduzca un número entero positivo</span>
+				<br><br>Coste de créditos globales: <span class="rojo">*</span><br> 
+				<input type="text" name="cost_global_credits" id="cost_global_credits" value="0" /> 
+				<span class="hidden info" id="msg_g_cred">Introduzca un número entero positivo</span>
+				<br><br>Link de información: <br> 
+				<input size="100%" type="text" name="url" id="url" /> 
+				<br><br> 
+				{% if course %} 
+				<input type="hidden" name="action" value="edit_course" /> 
+				<input type="hidden" name="course_key" value="{{course.key()}}" />
+				<button onclick="return validateForm()">Actualizar</button>
+				<script type="text/javascript">fillFields()</script>
+				{% else %} <input type="hidden" name="action" value="save_course" />
+				<button onclick="return validateForm()">Crear</button>
+				{% endif %}
+
+				<button type="button" onclick="cancel()">Cancelar</button>
+
+			</form>
+			<p class="info" id="info">{{info_tag}}</p>
+		</div>
+	</div>
+</body>
+</html>

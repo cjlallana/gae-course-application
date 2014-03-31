@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>BBVA . Gestión de empleados y cursos</title>
+<meta name="author" content="Carlos Lallana" />
+<link type="text/css" rel="stylesheet"
+	href="/statics/stylesheets/bbva-styles.css" />
+<!-- Date: 2013-04-08 -->
+
+<script src="/statics/js/jquery-1.9.1.js"></script>
+<script src="/statics/js/utils.js"></script>
+
+<script type="text/javascript">
+/* Hide the warning tags */
+$(document).ready(function(){
+	hideTags();
+});
+</script>
+
+<script type="text/javascript">
+/* Set the selected index of each selector to blank. */
+$(document).ready(function(){
+	{% if not relation %} // Only if we are not editing
+		$("#status").prop("selectedIndex", -1);
+	{% endif %}
+});
+</script>
+
+</head>
+
+<script type="text/javascript">
+function hideTags()
+{
+	$("#msg_email").hide();
+	$("#msg_code").hide();
+	$("#msg_status").hide();
+}
+</script>
+
+<script type="text/javascript">
+function validateForm()
+{
+	hideTags();
+	
+	var ok		= true;
+	var w_email = document.forms["new_relation"]["w_email"].value;
+	var c_code 	= document.forms["new_relation"]["c_code"].value;
+	var s_index = document.forms["new_relation"]["status"].selectedIndex;
+	
+	if (c_code == null || c_code == ""){
+		$("#msg_code").fadeIn('fast');
+		ok = false;
+	}
+
+	var atpos 	= w_email.indexOf("@");
+	var dotpos 	= w_email.lastIndexOf(".");
+	if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= w_email.length || 
+		w_email == null || w_email == ""){
+		$("#msg_email").fadeIn('fast');
+		ok = false;
+	}
+
+	if (s_index == -1){	
+		$("#msg_status").fadeIn('fast');
+		ok = false;
+	}
+
+	if (ok)
+		return checkCode(w_email, c_code);
+	else
+		return false;
+}
+</script>
+
+<script type="text/javascript">
+function checkCode(w_email, c_code)
+{
+	action 	= 	"/localadmin/applications/checkdata?action=check_data&w_email=" + w_email +
+				"&c_code=" + c_code;
+
+	var is_data_ok = false;
+
+	$.ajax({
+		type: 'POST',
+		url: action,
+		async: false,
+		success: function(data) {
+			if (data == "OK")
+				is_data_ok = true;					
+			else
+				$('#info').text(data);
+		}
+	}); // end .ajax
+
+	return is_data_ok;
+}
+</script>
+
+<script type="text/javascript">
+function fillFields()
+{
+	{% if relation %} // Neccessary to avoid errors
+		document.getElementById("w_email").value	= "{{relation.r_worker.email}}";
+		document.getElementById("c_code").value		= "{{relation.r_course.code}}";
+		
+		setStringSelector(document.getElementById("status"), "{{relation.status}}");
+	{% endif %}
+}
+</script>
+
+<script type="text/javascript">
+function cancel()
+{
+	window.location.assign("/localadmin/applications");
+}
+</script>
+
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu">
+			<ul>
+				<li><a class="active" href="/localadmin/applications"><span>Solicitudes</span></a></li>
+			</ul>
+		</div>
+		<!-- Fin Menu -->
+
+		<!-- Content -->
+		<div id="wrapper_content">
+			{% if relation %}
+			<h2>EDITAR SOLICITUD</h2>
+			{% else %}
+			<h2>NUEVA SOLICITUD</h2>
+			{% endif %}
+
+			<p>Por favor, rellene los datos:</p>
+
+			<form name="new_relation" id="new_relation" action="/localadmin/applications/new/save"
+				method="post">
+				<br>Email del empleado: <br> 
+				<input autofocus type="text" name="w_email" id="w_email" />
+				<span class="info" id="msg_email">Introduzca un email válido</span>
+				<br><br>Código del curso: <br> 
+				<input type="text" name="c_code" id="c_code" />
+				<span class="info" id="msg_code">Introduzca un código</span>
+				<br><br>Estado de la solicitud: <br> 
+				<select name="status" id="status"> 
+					<option>Solicitado</option> 
+					<option>Confirmado</option>
+					<option>Realizado</option>
+				</select> 
+				<span class="info" id="msg_status">Seleccione un estado</span>
+				
+				<br><br> 
+				{% if relation %} 
+				<input type="hidden" name="action" value="edit_relation" /> 
+				<input type="hidden" name="relation_key" value="{{relation.key()}}" />
+				<button onclick="return validateForm()">Actualizar</button>
+				<script type="text/javascript">fillFields()</script>
+				{% else %} <input type="hidden" name="action" value="save_relation" />
+				<button onclick="return validateForm()">Crear</button>
+				{% endif %}
+
+				<button type="button" onclick="cancel()">Cancelar</button>
+
+			</form>
+			<p class="info" id="info">{{info_tag}}</p>
+		</div>
+	</div>
+</body>
+</html>

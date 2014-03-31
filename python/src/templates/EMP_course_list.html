@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Campus BBVA . Plan de Formación Global de Servicios Jurídicos</title>
+	<meta name="author" content="Carlos Lallana" />
+	<link type="text/css" rel="stylesheet" href="/statics/stylesheets/bbva-styles.css" />
+	<!-- Date: 2013-04-24 -->
+
+	<script src="/statics/js/jquery-1.9.1.js"></script>
+	<script src="/statics/js/jquery-ui-1.10.3.js"></script>
+
+<script>
+$(function() {
+	$( "#tabs" ).tabs();
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	//$('#loading').hide();
+
+	$('.btn_applied').text("Solicitado");
+	$('.btn_apply').text("Solicitar");
+
+	$('.btn_applied').mouseenter(function(){
+		$(this).text("Cancelar");
+	});
+	
+	$('.btn_applied').mouseleave(function(){
+		$(this).text("Solicitado");
+	});
+	
+	$('.btn_applied').click(function(){
+		$('body').css('cursor', 'wait');
+		$(this).css('cursor', 'wait');
+		var action = "/employer/courses/change?action=cancel&k=" + $(this).attr('id');
+		$.ajax({
+			type: 'POST',
+			url: action,
+			success: function(data) {
+				if (data == "OK"){
+					location.reload();
+				}
+			}
+		}); // end .ajax
+	});
+	
+	$('.btn_apply').click(function(){
+		$('body').css('cursor', 'wait');
+		$(this).css('cursor', 'wait');
+		var action = "/employer/courses/change?action=apply&k=" + $(this).attr('id');
+		$.ajax({
+			type: 'POST',
+			url: action,
+			success: function(data) {
+			
+				if (data == "OK"){
+					location.reload();
+					return;
+				}
+				
+				$('body').css('cursor', 'default');
+				$(this).css('cursor', 'default');
+				
+				if (data == "ERROR_LC")
+					$('#info_tag').text("Créditos locales insuficientes");
+
+				if (data == "ERROR_GC")
+					$('#info_tag').text("Créditos globales insuficientes");
+			}
+		}); // end .ajax
+	});
+	
+	$('.btn_confirm').click(function(){
+		window.location.replace("/employer/courses/confirm?action=confirm");
+	});
+});
+</script>
+
+</head>
+
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu">
+			<ul>
+				<li><a href="/employer/info?p=intro">Inicio</a></li>
+				<li><a href="/employer/info?p=goal">Características</a></li>
+				<li><a href="/employer/info?p=structure">Estructura</a></li>
+				<li><a class="active" href="">Solicitud de Cursos</a></li>
+			</ul>
+		</div>
+		<!-- Fin Menu -->
+
+		<!-- Content -->
+		<div id="wrapper_content">
+
+			<div id="header_content">
+				<h1>Servicios Jurídicos del Grupo</h1>
+			</div>
+			<div id="column">
+				<div id="block_inf">
+					Bienvenido al portal de formación:
+					<p>
+						{{worker.email}} <a href="{{url_logout}}"> <img
+							src="/statics/img/logout.png" alt="" border="0" /></a>
+					</p>
+					<hr>
+					Créditos disponibles:
+					<p id="wlc">{{worker.local_credits}} créditos locales</p>
+					<p id="wgc">{{worker.global_credits}} créditos globales</p>
+				</div>
+				<img src="/statics/img/logo_tecno.jpg" alt="" border="0" />
+			</div>
+			
+			<div id="main">
+				<img src="/statics/img/logo_apply.jpg" alt="" width="100%" border="0" />
+				<div class="breadcrumbs">
+					<a href="/">Inicio</a> > <a class="active" href="#">Solicitud de cursos</a>
+				</div>
+				
+				<h2>Solicitud de Cursos</h2>
+				<p>
+					En esta sección podrás seleccionar los cursos que realizarás a lo
+					largo del año. Realiza tu selección y una vez que hayas finalizado
+					asegúrate de <b>enviar la solicitud</b> para que entres en la lista
+					de espera para la realización de estos cursos. 
+				</p>
+
+				<p class="info" id="info_tag"></p>
+				
+				<div id="tabs">
+					<ul>
+					<li><a href="#tabs-1">Cursos globales</a></li>
+					<li><a href="#tabs-2">Cursos locales</a></li>
+					<li style="float: right;"  id="li_btn_confirm">
+						<span class="btn_confirm">Enviar solicitudes</span>
+					</li>
+					</ul>
+					
+					<div id="tabs-1">
+					
+							{% for ga in g_applications %}
+							{% if ga.status == "Confirmado" %}
+							<table class="t_courses" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="t_course_name">{{ga.r_course.name}} - {{ga.r_course.cost_global_credits}} créditos</td>
+								<td class="t_course_ncred"></td>
+							</tr>
+							<tr>
+								<td class="t_course_info">
+								{% if ga.r_course.url %}
+									<a href="{{ga.r_course.url}}" target="_blank">+ info</a>
+								{% endif %}
+								</td>
+								<td class="t_course_button">
+									<center>
+									Confirmado
+									</center>
+								</td>
+							</tr>
+							</table>
+							{% else %}
+							<table class="t_courses" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="t_course_name">{{ga.r_course.name}} - {{ga.r_course.cost_global_credits}} créditos</td>
+								<td class="t_course_ncred"></td>
+							</tr>
+							<tr>
+								<td class="t_course_info">
+								{% if ga.r_course.url %}
+									<a href="{{ga.r_course.url}}" target="_blank">+ info</a>
+								{% endif %}
+								</td>
+								<td class="t_course_button">
+									<center>
+									<button class="btn_applied" id="{{ga.key()}}"></button>
+									</center>
+								</td>
+							</tr>
+							</table>
+							{% endif %}
+							{% endfor %}
+						
+							{% for fgc in free_g_courses %}
+							<table class="t_courses" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="t_course_name">{{fgc.name}} - {{fgc.cost_global_credits}} créditos</td>
+								<td class="t_course_ncred"></td>
+							</tr>
+							<tr>
+								<td class="t_course_info">
+								{% if fgc.url %}
+									<a href="{{fgc.url}}" target="_blank">+ info</a>
+								{% endif %}
+								</td>
+								<td class="t_course_button">
+									<center>
+									<button class="btn_apply" id="{{fgc.key()}}" 
+									{% if fgc.cost_global_credits > worker.global_credits%}
+									disabled
+									{% endif %}
+									></button>
+									</center>
+								</td>
+							</tr>
+							{% endfor %}
+						</table>
+					</div>
+					
+					<div id="tabs-2">
+						
+							{% for la in l_applications %}
+							
+							{% if la.status == "Confirmado" %}
+							<table class="t_courses" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="t_course_name">{{la.r_course.name}} - {{la.r_course.cost_local_credits}} créditos</td>
+								<td class="t_course_ncred"></td>
+							</tr>
+							<tr>
+								<td class="t_course_info">
+								{% if la.r_course.url %}
+									<a href="{{la.r_course.url}}" target="_blank">+ info</a>
+								{% endif %}
+								</td>
+								<td class="t_course_button">
+									<center>
+									Confirmado
+									</center>
+								</td>
+							</tr>
+							</table>
+							{% else %}
+							<table class="t_courses" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="t_course_name">{{la.r_course.name}} - {{la.r_course.cost_local_credits}} créditos locales</td>
+								<td class="t_course_ncred"></td>
+							</tr>
+							<tr>
+								<td class="t_course_info">
+								{% if la.r_course.url %}
+									<a href="{{la.r_course.url}}" target="_blank">+ info</a>
+								{% endif %}
+								</td>
+								<td class="t_course_button">
+									<center>
+									<button class="btn_applied" id="{{la.key()}}"></button>
+									</center>
+								</td>
+							</tr>
+							</table>
+							{% endif %}
+							{% endfor %}
+						
+							{% for flc in free_l_courses %}
+							<table class="t_courses" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="t_course_name">{{flc.name}} - {{flc.cost_local_credits}} créditos</td>
+								<td class="t_course_ncred"></td>
+							</tr>
+							<tr>
+								<td class="t_course_info">
+								{% if flc.url %}
+									<a href="{{flc.url}}" target="_blank">+ info</a>
+								{% endif %}
+								</td>
+								<td class="t_course_button">
+									<center>
+									<button class="btn_apply" id="{{flc.key()}}" 
+									{% if flc.cost_local_credits > worker.local_credits%}
+									disabled
+									{% endif %}
+									></button>
+									</center>
+								</td>
+							</tr>
+							</table>
+							{% endfor %}
+						
+					</div>
+					
+					
+				</div>
+			</div>
+		</div>
+		<!-- Fin Content -->
+		
+		<!-- Footer -->
+		<div id="footer">&copy; BBVA - 2013</div>
+		<!-- Fin Footer -->
+	</div>
+
+</body>
+</html>

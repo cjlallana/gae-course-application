@@ -1,0 +1,52 @@
+application: wc-bbva-01
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:  
+- url: /statics
+  static_dir: statics
+
+- url: /
+  script: main.app
+  
+- url: /superadmin
+  script: entry_control.app
+
+- url: /countries.*
+  script: country.app
+  
+- url: /plans.*
+  script: plan.app
+  
+- url: /courses.*
+  script: course.app
+  
+- url: /administrators.*
+  script: administrator.app
+  
+- url: /workers.*
+  script: worker.app
+
+- url: /relations.*
+  script: worker_course_relation.app
+
+- url: /localadmin
+  script: entry_control.app
+  
+- url: /localadmin/applications.*
+  script: LA_relation.app
+  
+- url: /employer
+  script: entry_control.app
+  
+- url: /employer/info
+  script: EMP_info.app
+  
+- url: /employer/courses.*
+  script: EMP_course.app
+  
+libraries:
+- name: jinja2
+  version: latest

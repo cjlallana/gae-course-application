@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>BBVA . Bienvenido</title>
+	<meta name="author" content="Carlos Lallana" />
+	<link type="text/css" rel="stylesheet" href="/statics/stylesheets/bbva-styles.css" />
+	<!-- Date: 2013-04-08 -->
+</head>
+ 
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu">
+		</div>
+		<!-- Fin Menu -->
+
+		<h2>INICIO</h2>
+
+		<h3>BIENVENIDO A LA PLATAFORMA PARA LA GESTIÓN DE SOLICITUDES DE CURSOS</h3>
+
+		<h3>Por favor, seleccione una opción:</h3>
+		
+		<ul>
+			<li><a href="/superadmin">Acceder como super-administrador</a></li>
+			<br>
+			<li><a href="/localadmin">Acceder como administrador local</a></li>
+			<br>
+			<li><a href="/employer">Acceder como empleado</a></li>
+		</ul>
+		<br>
+		{% if user %}
+			<p><b>{{user}}</b></p>
+		{% endif %}
+		
+		<a href="{{google_link}}">{{str_link}}</a>
+		<br>
+		<p class="info">{{info_tag}}</p>
+	</div>
+</body>
+</html>

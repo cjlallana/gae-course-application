@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>BBVA . Gestión de administradores</title>
+	<meta name="author" content="Carlos Lallana" />
+	<link type="text/css" rel="stylesheet" href="/statics/stylesheets/bbva-styles.css" />
+	<!-- Date: 2013-04-08 -->
+
+	<script src="/statics/js/jquery-1.9.1.js"></script>
+	<script src="/statics/js/utils.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function()
+{
+	$("#country").prop("selectedIndex", -1);
+	
+	$('#div_f_new_admin').hide();
+	
+	$('#button_new_admin').click(function(){
+		$(this).hide();
+		$('#div_f_new_admin').fadeIn('fast');
+	});
+	
+	$('#close_new').click(function(){
+		$('#div_f_new_admin').hide();
+		$('#info').text("");
+		$('#button_new_admin').fadeIn('fast');
+	});
+	
+	$('#close_edit').click(function(){
+		$('#div_f_edit_admin').hide();
+	});
+});
+</script>
+
+<script type="text/javascript">
+/* 	While entering both inputs, if Enter key is hit, the proper button to each 
+	input is clicked.*/
+$(document).ready(function(){
+	$('#email').keypress(function(e) {
+		if (e.keyCode === 13) {
+			e.preventDefault();
+			$('#button_create').click();
+		}
+	})
+	
+	$('#email_edit').keypress(function(e) {
+		if (e.keyCode === 13) {
+			e.preventDefault();
+			$('#btn_ok_edit').click();
+		}
+	})
+});
+</script>
+
+</head>
+
+<script>
+function createAdmin()
+{
+	var c_key 	= document.getElementById("c_key").value;
+	var email 	= document.getElementById("email").value;
+	
+	if (c_key == null || c_key == ""){
+		$('#info').text("Seleccione un país");
+		return false;
+	}
+	
+	var atpos 	= email.indexOf("@");
+	var dotpos 	= email.lastIndexOf(".");
+	if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length || 
+		email == null || email == ""){
+		$('#info').text("Introduzca un email correcto");
+		return false;
+	}
+
+	// Enviamos el formulario usando AJAX
+	$.ajax({
+		type: 'POST',
+		url: $('#form_new_admin').attr('action'),
+		data: $('#form_new_admin').serialize(),
+		// Mostramos un mensaje con la respuesta del servidor
+		success: function(data) {
+			if (data == "OK")
+				window.location.href = "/administrators?action=view_administrators&p=1&m=1";
+			else
+				$('#info').text(data);
+		}
+	});
+}
+</script>
+
+<script type="text/javascript">
+function editAdmin()
+{
+	c_key 		= document.getElementById("c_key_edit").value;
+	email 		= document.getElementById("email_edit").value;
+	admin_key 	= document.getElementById("key_edit").value;
+	
+	if (c_key == null || c_key == ""){
+		$('#info').text("Seleccione un país");
+		return false;
+	}
+
+	var atpos 	= email.indexOf("@");
+	var dotpos 	= email.lastIndexOf(".");
+	if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length || 
+		email == null || email == ""){
+		$('#info').text("Introduzca un email correcto");
+		return false;
+	}
+
+	if (c_key == null || c_key == ""){
+		$('#info').text("Seleccione un país");
+		return false;
+	}
+	
+	action 	= 	"/administrators/save?action=edit_administrator&k=" + admin_key +
+				"&email=" + email + "&c_key=" + c_key;
+
+	$.ajax({
+		type: 'POST',
+		url: action,
+		success: function(data) {
+			if (data == "OK")
+				window.location.href = "/administrators?action=view_administrators&p=1&m=3";
+			else
+				$('#info').text(data);
+		}
+	}); // end .ajax
+}
+</script>
+
+<script type="text/javascript">
+function deleteAdmin(admin_key)
+{
+	warning = "¿Está seguro de que desea eliminar este administrador?";
+
+	action = "/administrators/delete?action=delete_administrator&k=" + admin_key;
+	
+	if (confirm(warning)){
+		// Send form via AJAX
+		$.ajax({
+			type: 'POST',
+			url: action,
+			success: function(data) {
+			if (data == "OK")
+				window.location.href = "/administrators?action=view_administrators&p=1&m=2";
+			else
+				$('#info').text(data);
+		}
+	}); // end .ajax
+	
+	} // end if
+}
+</script>
+
+<script type="text/javascript">
+function setCKey(country_key)
+{
+	$('#c_key').val(country_key);
+}
+</script>
+
+<script type="text/javascript">
+function setCKeyEdit(country_key)
+{
+	$('#c_key_edit').val(country_key);
+}
+</script>
+
+<script type="text/javascript">
+function showEditForm(img, admin_key, admin_email, country_key, country_name)
+{
+	$(img).next().after($('#div_f_edit_admin'));
+	$('#div_f_edit_admin').fadeIn('fast');
+	var country_selector = document.getElementById("country_edit");
+	setStringSelector(country_selector, country_key);
+	$('#c_key_edit').val(country_key);
+	$('#email_edit').val(admin_email);
+	$('#key_edit').val(admin_key);
+}
+</script>
+
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu">
+			<ul>
+				<li><a href="/countries"><span>Países</span></a></li>
+				<li><a href="/plans"><span>Itinerarios</span></a></li>
+				<li><a href="/courses"><span>Cursos</span></a></li>
+				<li><a href="/relations"><span>Solicitudes</span></a></li>
+				<li><a class="active" href="/administrators"><span>Administradores</span></a></li>
+				<li><a href="/workers"><span>Empleados</span></a></li>
+			</ul>
+		</div>
+		<!-- Fin Menu -->
+
+		<h2>ADMINISTRADORES</h2>
+		<br>
+		
+		<button id="button_new_admin">Nuevo administrador</button>
+		
+		<div id="div_f_new_admin">
+			<form id="form_new_admin" action="/administrators/save">
+				<input type="hidden" name="action" value="save_administrator" />
+				<select name="country" id="country" onchange="setCKey(this.value)">
+				{% for c in countries %}
+					<option value="{{c.key()}}">{{c.name}}</option>
+				{% endfor %}
+				</select>
+				<input type="hidden" name="c_key" id="c_key" />
+				<input type="text" name="email" id="email" placeholder="Email" />
+				<button type="button" id="button_create" onclick="createAdmin()">Crear</button>
+				<img src="/statics/img/iconCancel.gif" id="close_new" width="10">
+			</form>
+		</div>
+		
+		<p class="info" id="info">{{info_tag}}</p>
+		
+		{% if administrators %}
+		<table cellpadding="0" cellspacing="0" class="tabla">
+			<tr>
+				<th><span class="az_3">País</span></th>
+				<th><a href="/administrators?action=view_administrators&p=1&order=email">Email</a></th>
+				<th colspan="2"></th>
+			</tr>
+			{% for a in administrators %}
+			<tr>
+				<td width=20%>{{a.a_country.name}}</td>
+				<td width=30%>{{a.email}}</td>
+				<td>
+					<div style="float: left;">
+					<button class="btn_transp" title="Modificar administrador"
+					onclick="showEditForm(this, '{{a.key()}}', '{{a.email}}', 
+							'{{a.a_country.key()}}', '{{a.a_country.name}}')" >
+					<img src="/statics/img/iconEdit.gif" />
+					</button>
+
+					<button class="btn_transp" 
+					onclick="deleteAdmin('{{a.key()}}')" title="Eliminar administrador">
+						<img src="/statics/img/iconDelete.gif" />
+					</button>
+					</div>	
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<div style="float: right;">
+			<form action="/administrators" method="get">
+				<input type="hidden" name="action" value="view_administrators" />
+				<input type="hidden" name="order" value="{{order}}" />
+				<select name="p" onchange="this.form.submit()"> 
+				{% for page in range (1, n_pages + 1) %}
+					<option 
+					{% if page== p %}
+						selected="selected"
+					{% endif %}
+					value="{{page}}">{{page}}</option> {% endfor %}
+				</select>
+			</form>
+		</div>
+		{% else %}
+		<p class="info">¡No hay administradores que mostrar!</p>
+		{% endif %}
+		
+		<!-- This form is hidden and it appears after the edit button when clicked --> 
+		<div class="hidden" id="div_f_edit_admin" 
+		style="float: right; padding-left: 2em">
+			<form>
+				<select name="country_edit" id="country_edit" onchange="setCKeyEdit(this.value);">
+				{% for c in countries %}
+					<option value="{{c.key()}}">{{c.name}}</option>
+				{% endfor %}
+				</select>
+				<input type="hidden" name="c_key_edit" id="c_key_edit" />
+				<input type="text" id="email_edit" placeholder="Email" />
+				<input type="hidden" id="key_edit" />
+				<button type="button" id="btn_ok_edit" onclick="editAdmin()" >OK</button>
+				<img src="/statics/img/iconCancel.gif" id="close_edit" width="10">
+			</form>
+		</div>
+		
+	</div>
+</body>
+</html>

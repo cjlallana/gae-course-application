@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>BBVA . Administración de cursos</title>
+	<meta name="author" content="Carlos Lallana" />
+	<link type="text/css" rel="stylesheet" href="/statics/stylesheets/bbva-styles.css" />
+	<!-- Date: 2013-04-08 -->
+
+	<script src="/statics/js/jquery-1.9.1.js"></script>
+	<script src="/statics/js/utils.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#div_load_workers').hide();
+	$("#msg_file").hide();
+	$('#popup').hide();
+
+	$('#btn_load').click(function(){
+		$(this).hide();
+		$('#div_load_workers').fadeIn('fast');
+	});
+	
+	$('#close_load').click(function(){
+		$("#msg_file").hide();
+		$('#div_load_workers').hide();
+		$('#btn_load').fadeIn('fast');
+	});
+	
+	$('#img_help').click(function(){
+		$('#div_help').toggleClass('hidden');
+	});
+	
+	{% if filters.country %}
+		country_selector = document.getElementById("country");
+		setStringSelector(country_selector, "{{filters.country}}");
+	{% else %}
+		$("#country").prop("selectedIndex", -1);
+	{% endif %}
+});
+</script>
+
+</head>
+
+<script type="text/javascript">
+function validateForm()
+{
+	$("#msg_file").hide();
+	
+	var file = $('#file').val();
+
+	if (file == null || file == ""){
+		$("#msg_file").fadeIn('fast');
+		return false;
+	}
+	
+	// show the waiting mask
+    $("#waiting_mask").fadeTo(500, 0.25);
+    $("#popup").show();
+}
+</script>
+
+<script type="text/javascript">
+function deleteCourse()
+{
+	warning = "¿Está seguro de que desea eliminar este curso?";
+
+	return confirm(warning);
+}
+</script>
+
+<script type="text/javascript">
+function deleteAll()
+{
+	warning = "¿Está seguro de que desea eliminar todos los cursos?";
+
+	return confirm(warning);
+}
+</script>
+
+<script type="text/javascript">
+function clean()
+{
+	window.location.href = "/courses";
+}
+</script>
+
+<body>
+	<div id="wrapper">
+
+		<!-- Header -->
+		<div id="header">
+			<img src="/statics/img/customLogo.jpg" alt="" border="0" />
+		</div>
+		<!-- Fin Header -->
+
+		<!-- Menu -->
+		<div id="menu">
+			<ul>
+				<li><a href="/countries"><span>Países</span></a></li>
+				<li><a href="/plans"><span>Itinerarios</span></a></li>
+				<li><a class="active" href="/courses"><span>Cursos</span></a></li>
+				<li><a href="/relations"><span>Solicitudes</span></a></li>
+				<li><a href="/administrators"><span>Administradores</span></a></li>
+				<li><a href="/workers"><span>Empleados</span></a></li>
+			</ul>
+		</div>
+		<!-- Fin Menu -->
+
+		<h2>CURSOS</h2>
+		<br>
+		
+		<div id="div_button_new_course">
+			<form action="/courses/new" method="get">
+				<input type="hidden" name="action" value="view_new_course" />
+				<input type="submit" value="Nuevo curso" />
+			</form>
+		</div>
+		
+		<button id="btn_load">Carga masiva</button>
+		
+		<div id="div_load_workers" style="float: left;">
+			<form action="{{upload_url}}" method="post" enctype="multipart/form-data">
+				<input type="file" name="file" id="file" accept=".csv" />
+				<input type="submit" value="Subir" onclick="return validateForm(); "/>
+				<img src="/statics/img/iconCancel.gif" id="close_load" width="10">
+				<span class="info" id="msg_file">Seleccione un fichero</span>
+			</form>
+		</div>
+
+		<br>
+		<h3>Búsqueda de Cursos</h3>
+		<form action="">
+		<table>
+			<tr>
+				<td><b>País: </b></td>
+				<td>
+					<select name="country" id="country"> 
+						<option></option>
+					{% for c in countries %}
+						<option id="{{c.key()}}">{{c.name}}</option>
+					{% endfor %}
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td><b>Código: </b></td>
+				<td>
+					<input type="text" name="code" id="code" value="{{filters.code}}"/>
+				</td>
+			</tr>
+			<tr>
+  				<td><input type="submit" value="Buscar" /></td>
+  				<td><button type="button" onclick="clean()">Limpiar</button></td>
+			</tr>
+		</table>
+		</form>
+		<br>
+		
+		<p class="info" id="info">{{info_tag}}</p>
+		
+		{% if count_ok %}
+		<p class="info">{{count_ok}} cargas correctas y {{count_error}} errores</p>
+		{% endif %}
+		
+		{% if courses %}
+		<div style="float: right;">
+			<form action="/courses" method="get">
+				<input type="hidden" name="action" value="view_courses" />
+				<input type="hidden" name="order" value="{{order}}" />
+				<input type="hidden" name="country" value="{{filters.country}}" />
+				<input type="hidden" name="code" value="{{filters.code}}" />
+				<select name="p" onchange="this.form.submit()"> 
+				{% for page in range (1, n_pages + 1) %}
+					<option 
+					{% if page== p %}
+						selected="selected"
+					{% endif %}
+					value="{{page}}">{{page}}</option> {% endfor %}
+				</select>
+			</form>
+		</div>
+		
+		<table cellpadding="0" cellspacing="0" class="tabla">
+			<tr>
+				<th><span class="az_3">País</span></th>
+				<th><a href="/courses?action=view_courses&p=1&order=code">Código</a></th>
+				<th><a href="/courses?action=view_courses&p=1&order=name">Nombre</a></th>
+				<th>Disponible para: </th>
+				<th colspan="2"></th>
+			</tr>
+			{% for course in courses %}
+			<tr>
+				<td width=15%>{{course.c_country.name}}</td>
+				<td width=10%>{{course.code}}</td>
+				<td width=30%>{{course.name}}</td>
+				<td width=30%>
+					<ul>
+						{% for r in course.pc_relations %}
+						<li>{{r.r_plan.name}}</li>
+						{% endfor %}
+					</ul> 
+				</td>
+				<td>
+					<form action="/courses/edit" method="get" style="float: left;">
+						<input type="hidden" name="action" value="view_edit_course" />
+						<input type="hidden" name="k" value="{{course.key()}}" />
+						<button class="btn_transp" title="Editar Curso">
+							<img src="/statics/img/iconEdit.gif">
+						</button>
+					</form>
+					<form action="/courses/delete" method="post" style="float: left;">
+						<input type="hidden" name="action" value="delete_course" />
+						<input type="hidden" name="k" value="{{course.key()}}" />
+						<button class="btn_transp" title="Eliminar Curso" 
+						onclick="return deleteCourse()">
+							<img src="/statics/img/iconDelete.gif">
+						</button>
+					</form>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<div style="float: right;">
+			<form action="/courses" method="get">
+				<input type="hidden" name="action" value="view_courses" />
+				<input type="hidden" name="order" value="{{order}}" />
+				<input type="hidden" name="country" value="{{filters.country}}" />
+				<input type="hidden" name="code" value="{{filters.code}}" />
+				<select name="p" onchange="this.form.submit()"> 
+				{% for page in range (1, n_pages + 1) %}
+					<option 
+					{% if page== p %}
+						selected="selected"
+					{% endif %}
+					value="{{page}}">{{page}}</option> {% endfor %}
+				</select>
+			</form>
+		</div>
+		{% else %}
+		<p class="info">¡No hay cursos que mostrar!</p>
+		{% endif %}
+
+		<br>
+		<form action="/courses/delete" method="post">
+			<input type="hidden" name="action" value="delete_all_courses" />
+			<button onclick="return deleteAll()">Borrar todos los cursos</button>
+		</form>
+		
+		<br>
+		<img id="img_help" alt="Ayuda" src="/statics/img/help.gif" title="Ayuda">
+		<div class="hidden help" id="div_help">
+			Un error en la carga puede deberse a que mientras se analiza el CSV:<br><br>
+			1. Un CURSO sea repetido, es decir, ya exista en la base de datos.<br>
+			2. El CÓDIGO DEL PAÍS de un curso no corresponda con ningún país de la base de datos.<br>
+			<br>Si uno de los planes asociados a un curso no existe o es incorrecto, se ignora y se continúa con el siguiente.
+		</div>
+	</div>
+
+	<div id='waiting_mask'></div>
+	<div id='popup'>
+		<img alt="loading" src="/statics/img/loading.png" width="200px">
+	</div>
+</body>
+</html>
